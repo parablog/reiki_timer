@@ -60,7 +60,7 @@ class HomeController extends GetxController {
     return 1 - value - 0.10;
   }
 
-  int get seconds => minutes() * 10;
+  int get seconds => minutes() * 60;
 
   void tick() {
     elapsed++;
