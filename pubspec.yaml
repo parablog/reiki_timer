@@ -31,6 +31,7 @@ dependencies:
   get: ^4.1.4
   timer_count_down: ^2.0.1
   flutter_vector_icons: ^1.0.0
+  wakelock: ^0.5.2
 
 dev_dependencies:
   flutter_test:
@@ -85,8 +86,6 @@ flutter:
     - family: KeepImmunity
       fonts:
         - asset: assets/fonts/KeepImmunity.ttf
-
-#    fonts:
-#     - family: KeepImmunity
-#       fonts:
-#         - asset: assets/fonts/KeepImmunity.ttf
+    - family: Serenity
+      fonts:
+        - asset: assets/fonts/Serenity-PersonalUse.otf

@@ -127,15 +127,16 @@ class HomePage extends GetView<HomeController> {
         children: [
           Countdown(
             controller: controller.countdownController,
-            seconds: controller.minutes() * 60,
+            seconds: controller.seconds,
             build: (_, double time) {
-              // print('HomePage.build $time ${controller.left()}');
+              print('HomePage.build $time ${controller.left()}');
               controller.tick();
-              if (time % 60 == 0) controller.play();
+              // if (time % 60 == 0) controller.play();
               return Column(
                 children: [
+                  Text('seconds'),
                   Text(
-                    time.toInt().toString(),
+                    '${time.toInt()}',
                     style: counterTextStyle,
                   ),
                   Container(
@@ -150,21 +151,24 @@ class HomePage extends GetView<HomeController> {
                     height: 16.0,
                   ),
                   Text(
-                    "Position ${controller.position} of ${controller.positions()} - ${controller.minutes()} minutes each",
+                    "Position ${controller.position + 1} of ${controller.positions()}   (${controller.minutes()} minutes each)",
                   ),
                 ],
               );
             },
             interval: Duration(seconds: 1),
             onFinished: () {
+              controller.play();
               controller.move();
-
-              if (!controller.finished()) {
+              if (controller.finished()) {
+                print('HomePage.buildCounter done!');
+                Future.delayed(Duration(seconds: 1), () {
+                  controller.play();
+                  controller.stop();
+                });
+              } else {
                 print('HomePage.buildCounter restarting counter');
                 controller.restartCounter();
-              } else {
-                print('HomePage.buildCounter done!');
-                controller.stop();
               }
             },
           ),
@@ -254,50 +258,6 @@ class HomePage extends GetView<HomeController> {
   setOptions(int positions, int minutes) {
     controller.positions(positions);
     controller.minutes(minutes);
-  }
-
-  _addNewPair() => controller.started.value ? null : () => print('HomePage._addNewPair');
-}
-
-class PositionsWidget extends StatelessWidget {
-  final enabled;
-  final onInc;
-  final onDec;
-  final text;
-
-  const PositionsWidget({Key? key, required this.enabled, this.text, this.onInc, this.onDec})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ElevatedButton(
-            onPressed: () => enabled ? onDec() : null,
-            child: Text('-'),
-            style: buttonStyle,
-          ),
-        ),
-        Expanded(
-          child: Container(
-            alignment: Alignment.center,
-            child: Text(text, style: labelTextStyle),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ElevatedButton(
-            onPressed: () => enabled ? onInc() : null,
-            style: buttonStyle,
-            child: Text('+'),
-          ),
-        ),
-      ],
-    );
   }
 }
 

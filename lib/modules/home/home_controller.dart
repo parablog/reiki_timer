@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:reiki_app/services/sound_service.dart';
 import 'package:timer_count_down/timer_controller.dart';
+import 'package:wakelock/wakelock.dart';
 
 class HomeController extends GetxController {
   final _soundService = Get.find<SoundService>();
@@ -20,7 +21,6 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    countdownController.pause();
   }
 
   incrementPosition() => positions++;
@@ -37,12 +37,16 @@ class HomeController extends GetxController {
 
   void stop() {
     elapsed = 0;
-    position = positions.value;
+    position = 0;
     started(false);
+    Wakelock.disable();
   }
 
   void start() {
+    elapsed = 0;
+    position = 0;
     started(true);
+    Wakelock.enable();
   }
 
   void play() async {
@@ -50,11 +54,13 @@ class HomeController extends GetxController {
   }
 
   double left() {
-    var total = positions() * (minutes() * 60);
+    var total = positions() * seconds;
     var value = ((total - elapsed)) / total;
     // print('HomeController.left value -> ${value}');
-    return value;
+    return 1 - value - 0.10;
   }
+
+  int get seconds => minutes() * 10;
 
   void tick() {
     elapsed++;
@@ -63,10 +69,12 @@ class HomeController extends GetxController {
   void addToCount1() => count1.value++;
   void addToCount2() => count2.value++;
 
-  bool finished() => position == 0;
+  bool finished() {
+    return position == positions.value;
+  }
 
   void move() {
-    position--;
+    position++;
   }
 
   void restartCounter() {

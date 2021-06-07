@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Reiki Counter',
+      title: 'Reiki Timer',
       initialRoute: '/home',
       theme: ThemeData(
         // Define the default brightness and colors.
