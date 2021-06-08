@@ -22,7 +22,7 @@ class CounterInfo extends StatelessWidget {
     return Column(
       children: [
         Text(
-          'SECONDS',
+          'seconds',
           style: kLabelTextStyle,
         ),
         Text(
@@ -41,7 +41,7 @@ class CounterInfo extends StatelessWidget {
           height: 16.0,
         ),
         Text(
-          "Position   $position of $positions    ($minutes minutes each)",
+          "position   $position of $positions    ($minutes minutes each)",
           style: kLabelTextStyle,
         ),
       ],

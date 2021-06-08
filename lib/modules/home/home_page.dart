@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:reiki_app/modules/home/home_controller.dart';
-import 'package:reiki_app/widgets/config_setter.dart';
+import 'package:reiki_app/widgets/setter.dart';
 import 'package:reiki_app/widgets/counter_info.dart';
 import 'package:reiki_app/widgets/presets.dart';
 import 'package:timer_count_down/timer_count_down.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-
-import '../../constants.dart';
 
 class HomeBindings implements Bindings {
   @override
@@ -24,76 +21,14 @@ class HomePage extends GetView<HomeController> {
         top: true,
         child: Stack(
           children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: AssetImage(
-                    'assets/images/background.jpg',
-                  ),
-                ),
-              ),
-              // height: 350.0,
-            ),
-            Container(
-              // height: 350.0,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                gradient: LinearGradient(
-                  end: Alignment.bottomCenter,
-                  begin: Alignment.topCenter,
-                  stops: [0.3, 0.9],
-                  colors: <Color>[
-                    Color(0x8A02102D),
-                    Color(0x41D06E04),
-                  ],
-                ),
-              ),
-            ),
-            Positioned(
-              width: 25,
-              height: 63,
-              top: 8.0,
-              left: 8.0,
-              child: Container(
-                alignment: Alignment.topRight,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    fit: BoxFit.contain,
-                    image: AssetImage(
-                      'assets/images/reiki-white.png',
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            GetX<HomeController>(
-              builder: (controller) => controller.started()
-                  ? Positioned(
-                      bottom: 16.0,
-                      left: 16.0,
-                      child: ElevatedButton(
-                          child: Icon(
-                            controller.paused()
-                                ? Icons.play_arrow
-                                : Icons.pause,
-                          ),
-                          onPressed: () => controller.pause(),
-                          style: ElevatedButton.styleFrom(
-                            shape: CircleBorder(),
-                            padding: EdgeInsets.all(16),
-                            elevation: 0.0,
-                            primary: Colors.orangeAccent.withAlpha(200),
-                          )),
-                    )
-                  : Container(),
-            ),
+            BackgroundImage(),
+            GradientOverlay(),
+            Logo(),
+            buildPauseButton(),
             buildBody(),
           ],
         ),
       ),
-      //buildBody(kButtonStyle, kLabelTextStyle, kCounterTextStyle),
       floatingActionButton: FloatingActionButton(
         child: Obx(
           () =>
@@ -128,7 +63,6 @@ class HomePage extends GetView<HomeController> {
           children: [
             GetX<HomeController>(
               builder: (controller) {
-                print('minutes builder ${controller.minutes()}');
                 return Setter(
                   label: 'minutes',
                   value: controller.minutes(),
@@ -140,7 +74,6 @@ class HomePage extends GetView<HomeController> {
               height: 8.0,
             ),
             GetX<HomeController>(builder: (controller) {
-              print('positions builder ${controller.positions()}');
               return Setter(
                 label: 'positions',
                 value: controller.positions(),
@@ -210,84 +143,105 @@ class HomePage extends GetView<HomeController> {
     );
   }
 
-  Widget buildMinutes() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ElevatedButton(
-            onPressed:
-                controller.started.value ? null : controller.decrementMinutes,
-            style: kButtonStyle,
-            child: Icon(Fontisto.minus_a),
-          ),
-        ),
-        Column(
-          children: [
-            Text(
-              "${controller.minutes}",
-              style: kCounterTextStyle,
-            ),
-            Text(
-              "MINUTES",
-              style: kLabelTextStyle,
-            ),
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ElevatedButton(
-            onPressed:
-                controller.started.value ? null : controller.incrementMinutes,
-            style: kButtonStyle,
-            child: Icon(Fontisto.plus_a),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Row buildPositions() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ElevatedButton(
-            onPressed: controller.decrementPosition,
-            style: kButtonStyle,
-            child: Icon(Fontisto.minus_a),
-          ),
-        ),
-        Column(
-          children: [
-            Text(
-              "${controller.positions()}",
-              style: kCounterTextStyle,
-            ),
-            Text(
-              "POSITIONS",
-              style: kLabelTextStyle,
-            ),
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ElevatedButton(
-            onPressed: controller.incrementPosition,
-            style: kButtonStyle,
-            child: Icon(Fontisto.plus_a),
-          ),
-        ),
-      ],
-    );
-  }
-
   setOptions(int positions, int minutes) {
     controller.positions(positions);
     controller.minutes(minutes);
+  }
+
+  GetX<HomeController> buildPauseButton() {
+    return GetX<HomeController>(
+      builder: (controller) => controller.started()
+          ? Positioned(
+              bottom: 16.0,
+              left: 16.0,
+              child: ElevatedButton(
+                child: Icon(
+                  controller.paused() ? Icons.play_arrow : Icons.pause,
+                ),
+                onPressed: () => controller.pause(),
+                style: ElevatedButton.styleFrom(
+                  shape: CircleBorder(),
+                  padding: EdgeInsets.all(16),
+                  elevation: 0.0,
+                  primary: Colors.orangeAccent.withAlpha(200),
+                ),
+              ),
+            )
+          : Container(),
+    );
+  }
+}
+
+class Logo extends StatelessWidget {
+  const Logo({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      width: 25,
+      height: 63,
+      top: 8.0,
+      left: 8.0,
+      child: Container(
+        alignment: Alignment.topRight,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            fit: BoxFit.contain,
+            image: AssetImage(
+              'assets/images/reiki-white.png',
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class GradientOverlay extends StatelessWidget {
+  const GradientOverlay({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // height: 350.0,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        gradient: LinearGradient(
+          end: Alignment.bottomCenter,
+          begin: Alignment.topCenter,
+          stops: [0.3, 0.9],
+          colors: <Color>[
+            Color(0x8A02102D),
+            Color(0x41D06E04),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class BackgroundImage extends StatelessWidget {
+  const BackgroundImage({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        image: DecorationImage(
+          fit: BoxFit.cover,
+          image: AssetImage(
+            'assets/images/background.jpg',
+          ),
+        ),
+      ),
+      // height: 350.0,
+    );
   }
 }
