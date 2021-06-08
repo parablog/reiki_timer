@@ -22,53 +22,76 @@ class HomePage extends GetView<HomeController> {
     return Scaffold(
       body: SafeArea(
         top: true,
-        child: Stack(children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: AssetImage(
-                  'assets/images/background.jpg',
+        child: Stack(
+          children: <Widget>[
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage(
+                    'assets/images/background.jpg',
+                  ),
+                ),
+              ),
+              // height: 350.0,
+            ),
+            Container(
+              // height: 350.0,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                gradient: LinearGradient(
+                  end: Alignment.bottomCenter,
+                  begin: Alignment.topCenter,
+                  stops: [0.3, 0.9],
+                  colors: <Color>[
+                    Color(0x8A02102D),
+                    Color(0x41D06E04),
+                  ],
                 ),
               ),
             ),
-            // height: 350.0,
-          ),
-          Container(
-            // height: 350.0,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              gradient: LinearGradient(
-                end: Alignment.bottomCenter,
-                begin: Alignment.topCenter,
-                stops: [0.3, 0.9],
-                colors: <Color>[
-                  Color(0x8A02102D),
-                  Color(0x41D06E04),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            width: 25,
-            height: 63,
-            top: 8.0,
-            left: 8.0,
-            child: Container(
-              alignment: Alignment.topRight,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  fit: BoxFit.contain,
-                  image: AssetImage(
-                    'assets/images/reiki-white.png',
+            Positioned(
+              width: 25,
+              height: 63,
+              top: 8.0,
+              left: 8.0,
+              child: Container(
+                alignment: Alignment.topRight,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.contain,
+                    image: AssetImage(
+                      'assets/images/reiki-white.png',
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          buildBody(),
-        ]),
+            GetX<HomeController>(
+              builder: (controller) => controller.started()
+                  ? Positioned(
+                      bottom: 16.0,
+                      left: 16.0,
+                      child: ElevatedButton(
+                          child: Icon(
+                            controller.paused()
+                                ? Icons.play_arrow
+                                : Icons.pause,
+                          ),
+                          onPressed: () => controller.pause(),
+                          style: ElevatedButton.styleFrom(
+                            shape: CircleBorder(),
+                            padding: EdgeInsets.all(16),
+                            elevation: 0.0,
+                            primary: Colors.orangeAccent.withAlpha(200),
+                          )),
+                    )
+                  : Container(),
+            ),
+            buildBody(),
+          ],
+        ),
       ),
       //buildBody(kButtonStyle, kLabelTextStyle, kCounterTextStyle),
       floatingActionButton: FloatingActionButton(
@@ -77,15 +100,20 @@ class HomePage extends GetView<HomeController> {
               controller.started() ? Icon(Icons.stop) : Icon(Icons.play_arrow),
         ),
         onPressed: controller.startStop,
+        elevation: 0.0,
       ),
     );
   }
 
-  Container buildBody() {
-    return Container(
-      child: GetX<HomeController>(
-        builder: (controller) =>
-            controller.started() ? buildCounter() : buildConfig(),
+  Widget buildBody() {
+    return GetX<HomeController>(
+      builder: (controller) => AnimatedCrossFade(
+        firstChild: buildConfig(),
+        secondChild: buildCounter(),
+        crossFadeState: controller.started()
+            ? CrossFadeState.showSecond
+            : CrossFadeState.showFirst,
+        duration: Duration(milliseconds: 500),
       ),
     );
   }
@@ -95,47 +123,47 @@ class HomePage extends GetView<HomeController> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Expanded(
-          flex: 2,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              GetX<HomeController>(
-                builder: (controller) {
-                  print('minutes builder ${controller.minutes()}');
-                  return Setter(
-                    label: 'minutes',
-                    value: controller.minutes(),
-                    onChange: (value) => controller.minutes(value),
-                  );
-                },
-              ),
-              SizedBox(
-                height: 8.0,
-              ),
-              GetX<HomeController>(builder: (controller) {
-                print('positions builder ${controller.positions()}');
+        Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            GetX<HomeController>(
+              builder: (controller) {
+                print('minutes builder ${controller.minutes()}');
                 return Setter(
-                  label: 'positions',
-                  value: controller.positions(),
-                  onChange: (value) => controller.positions(value),
+                  label: 'minutes',
+                  value: controller.minutes(),
+                  onChange: (value) => controller.minutes(value),
                 );
-              }),
-            ],
-          ),
-        ),
-        Expanded(
-          flex: 1,
-          child: Padding(
-            padding:
-                const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 32.0),
-            child: Container(
-              child: Presets(
-                onTap: (int positions, int minutes) =>
-                    setOptions(positions, minutes),
-              ),
-              alignment: Alignment.center,
+              },
             ),
+            SizedBox(
+              height: 8.0,
+            ),
+            GetX<HomeController>(builder: (controller) {
+              print('positions builder ${controller.positions()}');
+              return Setter(
+                label: 'positions',
+                value: controller.positions(),
+                onChange: (value) => controller.positions(value),
+              );
+            }),
+          ],
+        ),
+        SizedBox(
+          height: 32,
+        ),
+        Divider(
+          color: Colors.orange.withAlpha(175),
+          height: 50,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 32.0),
+          child: Container(
+            child: Presets(
+              onTap: (int positions, int minutes) =>
+                  setOptions(positions, minutes),
+            ),
+            alignment: Alignment.center,
           ),
         ),
       ],
@@ -143,11 +171,13 @@ class HomePage extends GetView<HomeController> {
   }
 
   Widget buildCounter() {
-    return SafeArea(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Countdown(
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          height: 300,
+          child: Countdown(
             controller: controller.countdownController,
             seconds: controller.seconds,
             build: (_, double time) {
@@ -175,8 +205,8 @@ class HomePage extends GetView<HomeController> {
               }
             },
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

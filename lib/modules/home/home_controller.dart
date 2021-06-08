@@ -10,6 +10,7 @@ class HomeController extends GetxController {
   var positions = 10.obs;
   var minutes = 3.obs;
   var started = false.obs;
+  var paused = false.obs;
   var elapsed = 0;
   var position = 0;
 
@@ -39,6 +40,7 @@ class HomeController extends GetxController {
     elapsed = 0;
     position = 0;
     started(false);
+    countdownController.pause();
     Wakelock.disable();
   }
 
@@ -46,6 +48,7 @@ class HomeController extends GetxController {
     elapsed = 0;
     position = 0;
     started(true);
+    countdownController.restart();
     Wakelock.enable();
   }
 
@@ -79,5 +82,15 @@ class HomeController extends GetxController {
 
   void restartCounter() {
     countdownController.restart();
+  }
+
+  void pause() {
+    if (paused()) {
+      countdownController.resume();
+      paused(false);
+    } else {
+      countdownController.pause();
+      paused(true);
+    }
   }
 }
