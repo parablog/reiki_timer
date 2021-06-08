@@ -57,7 +57,7 @@ class HomeController extends GetxController {
     var total = positions() * seconds;
     var value = ((total - elapsed)) / total;
     // print('HomeController.left value -> ${value}');
-    return 1 - value - 0.10;
+    return 1 - value; // - 0.10;
   }
 
   int get seconds => minutes() * 60;

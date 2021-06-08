@@ -89,3 +89,6 @@ flutter:
     - family: Serenity
       fonts:
         - asset: assets/fonts/Serenity-PersonalUse.otf
+    - family: WireOne
+      fonts:
+        - asset: assets/fonts/WireOne-Regular.ttf

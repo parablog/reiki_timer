@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:reiki_app/modules/home/home_controller.dart';
+import 'package:reiki_app/widgets/config_setter.dart';
+import 'package:reiki_app/widgets/counter_info.dart';
+import 'package:reiki_app/widgets/presets.dart';
 import 'package:timer_count_down/timer_count_down.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+
+import '../../constants.dart';
 
 class HomeBindings implements Bindings {
   @override
@@ -14,45 +19,62 @@ class HomeBindings implements Bindings {
 class HomePage extends GetView<HomeController> {
   @override
   Widget build(context) {
-    // Instantiate your class using Get.put() to make it available for all "child" routes there.
-    // final HomeController c = Get.put(HomeController());
-
     return Scaffold(
-      // Replace the 8 lines Navigator.push by a simple Get.to(). You don't need context
-      body: Stack(children: <Widget>[
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: AssetImage(
-                'assets/images/background.jpg',
+      body: SafeArea(
+        top: true,
+        child: Stack(children: <Widget>[
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: AssetImage(
+                  'assets/images/background.jpg',
+                ),
+              ),
+            ),
+            // height: 350.0,
+          ),
+          Container(
+            // height: 350.0,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              gradient: LinearGradient(
+                end: Alignment.bottomCenter,
+                begin: Alignment.topCenter,
+                stops: [0.3, 0.9],
+                colors: <Color>[
+                  Color(0x8A02102D),
+                  Color(0x41D06E04),
+                ],
               ),
             ),
           ),
-          // height: 350.0,
-        ),
-        Container(
-          // height: 350.0,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            gradient: LinearGradient(
-              end: Alignment.bottomCenter,
-              begin: Alignment.topCenter,
-              stops: [0.3, 0.9],
-              colors: <Color>[
-                Color(0x8A02102D),
-                Color(0x41D06E04),
-              ],
+          Positioned(
+            width: 25,
+            height: 63,
+            top: 8.0,
+            left: 8.0,
+            child: Container(
+              alignment: Alignment.topRight,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.contain,
+                  image: AssetImage(
+                    'assets/images/reiki-white.png',
+                  ),
+                ),
+              ),
             ),
           ),
-        ),
-        buildBody(),
-      ]),
-      //buildBody(buttonStyle, labelTextStyle, counterTextStyle),
+          buildBody(),
+        ]),
+      ),
+      //buildBody(kButtonStyle, kLabelTextStyle, kCounterTextStyle),
       floatingActionButton: FloatingActionButton(
         child: Obx(
-          () => controller.started() ? Icon(Icons.stop) : Icon(Icons.play_arrow),
+          () =>
+              controller.started() ? Icon(Icons.stop) : Icon(Icons.play_arrow),
         ),
         onPressed: controller.startStop,
       ),
@@ -62,7 +84,8 @@ class HomePage extends GetView<HomeController> {
   Container buildBody() {
     return Container(
       child: GetX<HomeController>(
-        builder: (controller) => controller.started() ? buildCounter() : buildConfig(),
+        builder: (controller) =>
+            controller.started() ? buildCounter() : buildConfig(),
       ),
     );
   }
@@ -70,51 +93,50 @@ class HomePage extends GetView<HomeController> {
   Column buildConfig() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 32.0),
-          child: GetX<HomeController>(
-            builder: (controller) => !controller.started() ? buildPresets(labelTextStyle) : Container(),
+        Expanded(
+          flex: 2,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              GetX<HomeController>(
+                builder: (controller) {
+                  print('minutes builder ${controller.minutes()}');
+                  return Setter(
+                    label: 'minutes',
+                    value: controller.minutes(),
+                    onChange: (value) => controller.minutes(value),
+                  );
+                },
+              ),
+              SizedBox(
+                height: 8.0,
+              ),
+              GetX<HomeController>(builder: (controller) {
+                print('positions builder ${controller.positions()}');
+                return Setter(
+                  label: 'positions',
+                  value: controller.positions(),
+                  onChange: (value) => controller.positions(value),
+                );
+              }),
+            ],
           ),
         ),
-        GetX<HomeController>(
-          builder: (controller) => buildPositions(controller, buttonStyle, labelTextStyle),
-        ),
-        GetX<HomeController>(
-          builder: (controller) => buildMinutes(controller, buttonStyle, labelTextStyle),
-        ),
-      ],
-    );
-  }
-
-  Wrap buildPresets(TextStyle labelTextStyle) {
-    return Wrap(
-      spacing: 16.0,
-      children: [
-        ActionChip(
-          backgroundColor: Colors.grey,
-          label: Text(
-            '7 x 2m',
-            style: chipTextStyle,
+        Expanded(
+          flex: 1,
+          child: Padding(
+            padding:
+                const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 32.0),
+            child: Container(
+              child: Presets(
+                onTap: (int positions, int minutes) =>
+                    setOptions(positions, minutes),
+              ),
+              alignment: Alignment.center,
+            ),
           ),
-          // onPressed: controller.started.value ? null : myTapCallback,
-          onPressed: () => setOptions(7, 2),
-        ),
-        ActionChip(
-          backgroundColor: Colors.grey,
-          label: Text(
-            '7 x 3m',
-            style: chipTextStyle,
-          ),
-          onPressed: () => setOptions(7, 3),
-        ),
-        ActionChip(
-          backgroundColor: Colors.grey,
-          label: Text(
-            '7 x 5m',
-            style: chipTextStyle,
-          ),
-          onPressed: () => setOptions(7, 5),
         ),
       ],
     );
@@ -129,31 +151,14 @@ class HomePage extends GetView<HomeController> {
             controller: controller.countdownController,
             seconds: controller.seconds,
             build: (_, double time) {
-              print('HomePage.build $time ${controller.left()}');
               controller.tick();
-              // if (time % 60 == 0) controller.play();
-              return Column(
-                children: [
-                  Text('seconds'),
-                  Text(
-                    '${time.toInt()}',
-                    style: counterTextStyle,
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
-                    child: LinearProgressIndicator(
-                      value: controller.left(),
-                      color: Colors.orange.withAlpha(175),
-                      backgroundColor: Colors.brown,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 16.0,
-                  ),
-                  Text(
-                    "Position ${controller.position + 1} of ${controller.positions()}   (${controller.minutes()} minutes each)",
-                  ),
-                ],
+
+              return CounterInfo(
+                time: time,
+                left: controller.left(),
+                position: controller.position + 1,
+                positions: controller.positions(),
+                minutes: controller.minutes(),
               );
             },
             interval: Duration(seconds: 1),
@@ -161,13 +166,11 @@ class HomePage extends GetView<HomeController> {
               controller.play();
               controller.move();
               if (controller.finished()) {
-                print('HomePage.buildCounter done!');
                 Future.delayed(Duration(seconds: 1), () {
                   controller.play();
                   controller.stop();
                 });
               } else {
-                print('HomePage.buildCounter restarting counter');
                 controller.restartCounter();
               }
             },
@@ -177,7 +180,7 @@ class HomePage extends GetView<HomeController> {
     );
   }
 
-  Row buildMinutes(HomeController controller, ButtonStyle buttonStyle, TextStyle labelTextStyle) {
+  Widget buildMinutes() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -185,30 +188,30 @@ class HomePage extends GetView<HomeController> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: ElevatedButton(
-            onPressed: controller.started.value ? null : controller.decrementMinutes,
-            style: buttonStyle,
+            onPressed:
+                controller.started.value ? null : controller.decrementMinutes,
+            style: kButtonStyle,
             child: Icon(Fontisto.minus_a),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text('⌛', style: labelTextStyle),
-        ),
-        Expanded(
-          child: Container(
-            child: Obx(
-              () => Text(
-                "️Minutes: ${controller.minutes}",
-                style: labelTextStyle,
-              ),
+        Column(
+          children: [
+            Text(
+              "${controller.minutes}",
+              style: kCounterTextStyle,
             ),
-          ),
+            Text(
+              "MINUTES",
+              style: kLabelTextStyle,
+            ),
+          ],
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: ElevatedButton(
-            onPressed: controller.started.value ? null : controller.incrementMinutes,
-            style: buttonStyle,
+            onPressed:
+                controller.started.value ? null : controller.incrementMinutes,
+            style: kButtonStyle,
             child: Icon(Fontisto.plus_a),
           ),
         ),
@@ -216,7 +219,7 @@ class HomePage extends GetView<HomeController> {
     );
   }
 
-  Row buildPositions(HomeController controller, ButtonStyle buttonStyle, TextStyle labelTextStyle) {
+  Row buildPositions() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -224,30 +227,28 @@ class HomePage extends GetView<HomeController> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: ElevatedButton(
-            onPressed: controller.started.value ? null : controller.decrementPosition,
-            style: buttonStyle,
+            onPressed: controller.decrementPosition,
+            style: kButtonStyle,
             child: Icon(Fontisto.minus_a),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text('🙌🏻', style: labelTextStyle),
-        ),
-        Expanded(
-          child: Container(
-            child: Obx(
-              () => Text(
-                "Positions: ${controller.positions}",
-                style: labelTextStyle,
-              ),
+        Column(
+          children: [
+            Text(
+              "${controller.positions()}",
+              style: kCounterTextStyle,
             ),
-          ),
+            Text(
+              "POSITIONS",
+              style: kLabelTextStyle,
+            ),
+          ],
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: ElevatedButton(
-            onPressed: controller.started.value ? null : controller.incrementPosition,
-            style: buttonStyle,
+            onPressed: controller.incrementPosition,
+            style: kButtonStyle,
             child: Icon(Fontisto.plus_a),
           ),
         ),
@@ -260,26 +261,3 @@ class HomePage extends GetView<HomeController> {
     controller.minutes(minutes);
   }
 }
-
-final buttonStyle = ElevatedButton.styleFrom(
-  shape: CircleBorder(),
-  padding: EdgeInsets.all(16),
-  // primary: Colors.blue.withAlpha(125),
-  // primary: Colors.orangeAccent,
-  primary: Colors.orangeAccent.withAlpha(200),
-);
-
-final counterTextStyle = TextStyle(
-  fontSize: 100,
-  color: Colors.white,
-);
-
-final chipTextStyle = TextStyle(
-  fontSize: 28,
-  color: Colors.white,
-);
-
-final labelTextStyle = TextStyle(
-  fontSize: 32,
-  color: Colors.white,
-);
