@@ -33,9 +33,7 @@ class _SetterState extends State<Setter> {
   @override
   Widget build(BuildContext context) {
     this.current = this.widget.value;
-
-    print('Setter.build -> ${this} - $current - ${widget.value}');
-
+    // print('Setter.build -> ${this} - $current - ${widget.value}');
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -44,7 +42,7 @@ class _SetterState extends State<Setter> {
           padding: const EdgeInsets.all(8.0),
           child: ElevatedButton(
             onPressed: () {
-              print('increment (0)');
+              // print('increment (0)');
               decrement();
               this.widget.onChange(current);
             },
