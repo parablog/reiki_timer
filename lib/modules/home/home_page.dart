@@ -89,7 +89,7 @@ class HomePage extends GetView<HomeController> {
           height: 50,
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 32.0),
+          padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 32.0),
           child: Container(
             child: Presets(
               onTap: (int positions, int minutes) =>

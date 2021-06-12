@@ -8,75 +8,78 @@ class Presets extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(spacing: 4.0, alignment: WrapAlignment.center, children: [
-      ActionChip(
-        backgroundColor: Colors.grey,
-        label: Text(
-          '1m x 1',
-          style: kChipTextStyle,
+    return Container(
+      width: 300,
+      child: Wrap(spacing: 4.0, alignment: WrapAlignment.center, children: [
+        ActionChip(
+          backgroundColor: Colors.grey,
+          label: Text(
+            '1m x 1',
+            style: kChipTextStyle,
+          ),
+          // onPressed: controller.started.value ? null : myTapCallback,
+          onPressed: () => onTap(1, 1),
         ),
-        // onPressed: controller.started.value ? null : myTapCallback,
-        onPressed: () => onTap(1, 1),
-      ),
-      ActionChip(
-        backgroundColor: Colors.grey,
-        label: Text(
-          '1m x 3',
-          style: kChipTextStyle,
+        ActionChip(
+          backgroundColor: Colors.grey,
+          label: Text(
+            '1m x 3',
+            style: kChipTextStyle,
+          ),
+          // onPressed: controller.started.value ? null : myTapCallback,
+          onPressed: () => onTap(1, 3),
         ),
-        // onPressed: controller.started.value ? null : myTapCallback,
-        onPressed: () => onTap(1, 3),
-      ),
-      ActionChip(
-        backgroundColor: Colors.grey,
-        label: Text(
-          '2m x 7',
-          style: kChipTextStyle,
+        ActionChip(
+          backgroundColor: Colors.grey,
+          label: Text(
+            '2m x 7',
+            style: kChipTextStyle,
+          ),
+          // onPressed: controller.started.value ? null : myTapCallback,
+          onPressed: () => onTap(7, 2),
         ),
-        // onPressed: controller.started.value ? null : myTapCallback,
-        onPressed: () => onTap(7, 2),
-      ),
-      ActionChip(
-        backgroundColor: Colors.grey,
-        label: Text(
-          '3m x 7',
-          style: kChipTextStyle,
+        ActionChip(
+          backgroundColor: Colors.grey,
+          label: Text(
+            '3m x 7',
+            style: kChipTextStyle,
+          ),
+          onPressed: () => onTap(7, 3),
         ),
-        onPressed: () => onTap(7, 3),
-      ),
-      ActionChip(
-        backgroundColor: Colors.grey,
-        label: Text(
-          '5m x 7',
-          style: kChipTextStyle,
+        ActionChip(
+          backgroundColor: Colors.grey,
+          label: Text(
+            '5m x 7',
+            style: kChipTextStyle,
+          ),
+          onPressed: () => onTap(7, 5),
         ),
-        onPressed: () => onTap(7, 5),
-      ),
-      ActionChip(
-        backgroundColor: Colors.grey,
-        label: Text(
-          '2m x 12',
-          style: kChipTextStyle,
+        ActionChip(
+          backgroundColor: Colors.grey,
+          label: Text(
+            '2m x 12',
+            style: kChipTextStyle,
+          ),
+          // onPressed: controller.started.value ? null : myTapCallback,
+          onPressed: () => onTap(12, 2),
         ),
-        // onPressed: controller.started.value ? null : myTapCallback,
-        onPressed: () => onTap(12, 2),
-      ),
-      ActionChip(
-        backgroundColor: Colors.grey,
-        label: Text(
-          '3m x 12',
-          style: kChipTextStyle,
+        ActionChip(
+          backgroundColor: Colors.grey,
+          label: Text(
+            '3m x 12',
+            style: kChipTextStyle,
+          ),
+          onPressed: () => onTap(12, 3),
         ),
-        onPressed: () => onTap(12, 3),
-      ),
-      ActionChip(
-        backgroundColor: Colors.grey,
-        label: Text(
-          '5m x 12',
-          style: kChipTextStyle,
+        ActionChip(
+          backgroundColor: Colors.grey,
+          label: Text(
+            '5m x 12',
+            style: kChipTextStyle,
+          ),
+          onPressed: () => onTap(12, 5),
         ),
-        onPressed: () => onTap(12, 5),
-      ),
-    ]);
+      ]),
+    );
   }
 }
