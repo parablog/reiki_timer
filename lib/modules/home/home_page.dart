@@ -24,7 +24,6 @@ class HomePage extends GetView<HomeController> {
             BackgroundImage(),
             GradientOverlay(),
             Logo(),
-            buildPauseButton(),
             buildBody(),
           ],
         ),
@@ -109,7 +108,7 @@ class HomePage extends GetView<HomeController> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Container(
-          height: 300,
+          // height: 300,
           child: Countdown(
             controller: controller.countdownController,
             seconds: controller.seconds,
@@ -139,6 +138,10 @@ class HomePage extends GetView<HomeController> {
             },
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: buildPauseButton(),
+        ),
       ],
     );
   }
@@ -151,21 +154,23 @@ class HomePage extends GetView<HomeController> {
   GetX<HomeController> buildPauseButton() {
     return GetX<HomeController>(
       builder: (controller) => controller.started()
-          ? Positioned(
-              bottom: 16.0,
-              left: 16.0,
-              child: ElevatedButton(
-                child: Icon(
-                  controller.paused() ? Icons.play_arrow : Icons.pause,
-                ),
-                onPressed: () => controller.pause(),
-                style: ElevatedButton.styleFrom(
-                  shape: CircleBorder(),
-                  padding: EdgeInsets.all(16),
-                  elevation: 0.0,
-                  primary: Colors.orangeAccent.withAlpha(200),
-                ),
+          ?
+          // Positioned(
+          //     bottom: 16.0,
+          //     left: 16.0,
+          //     child:
+          IconButton(
+              icon: Icon(
+                controller.paused() ? Icons.play_arrow : Icons.pause,
               ),
+              onPressed: () => controller.pause(),
+              // style: ElevatedButton.styleFrom(
+              //   shape: CircleBorder(),
+              //   padding: EdgeInsets.all(16),
+              //   elevation: 0.0,
+              //   primary: Colors.orangeAccent.withAlpha(200),
+              // ),
+              // ),
             )
           : Container(),
     );
@@ -184,13 +189,16 @@ class Logo extends StatelessWidget {
       height: 63,
       top: 8.0,
       left: 8.0,
-      child: Container(
-        alignment: Alignment.topRight,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            fit: BoxFit.contain,
-            image: AssetImage(
-              'assets/images/reiki-white.png',
+      child: Opacity(
+        opacity: 0.5,
+        child: Container(
+          alignment: Alignment.topRight,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              fit: BoxFit.contain,
+              image: AssetImage(
+                'assets/images/reiki-white.png',
+              ),
             ),
           ),
         ),

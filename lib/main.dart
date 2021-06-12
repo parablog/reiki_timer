@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Reiki Timer',
       initialRoute: '/home',
       theme: ThemeData(

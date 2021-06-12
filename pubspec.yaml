@@ -32,12 +32,6 @@ flutter:
     - assets/images/
 
   fonts:
-    - family: KeepImmunity
-      fonts:
-        - asset: assets/fonts/KeepImmunity.ttf
-    - family: Serenity
-      fonts:
-        - asset: assets/fonts/Serenity-PersonalUse.otf
     - family: WireOne
       fonts:
         - asset: assets/fonts/WireOne-Regular.ttf

@@ -42,17 +42,20 @@ class _SetterState extends State<Setter> {
             child: Icon(Fontisto.minus_a),
           ),
         ),
-        Column(
-          children: [
-            Text(
-              "${this.widget.value}",
-              style: kCounterTextStyle,
-            ),
-            Text(
-              this.widget.label,
-              style: kLabelTextStyle,
-            ),
-          ],
+        Container(
+          width: 100,
+          child: Column(
+            children: [
+              Text(
+                "${this.widget.value}",
+                style: kCounterTextStyle,
+              ),
+              Text(
+                this.widget.label,
+                style: kLabelTextStyle,
+              ),
+            ],
+          ),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
@@ -67,6 +70,7 @@ class _SetterState extends State<Setter> {
   }
 
   increment() {
+    if ((current + 1) == 100) return;
     setState(() {
       current++;
     });

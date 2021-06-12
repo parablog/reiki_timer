@@ -1,4 +1,4 @@
-# reiki_app
+# Reiki Timer
 
 A simple Reiki timer. Allows setting the number of positions and how much time to spend on each.
 
