@@ -1,26 +1,32 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:reiki_app/services/sound_service.dart';
-import 'package:timer_count_down/timer_controller.dart';
+// import 'package:reiki_app/widgets/timer_countdown.dart';
 import 'package:wakelock/wakelock.dart';
 
 class HomeController extends GetxController {
   final _soundService = Get.find<SoundService>();
-  final countdownController = new CountdownController();
 
+  // reactives
   var positions = 10.obs;
   var minutes = 3.obs;
+
   var started = false.obs;
   var paused = false.obs;
-  var elapsed = 0;
-  var position = 0;
 
-  // todo: remove me
-  final count1 = 0.obs;
-  final count2 = 0.obs;
-  int get sum => count1.value + count2.value;
+  // state
+  var secondsElapsed = 0.obs;
+  var currentPosition = 0.obs;
+
+  // just counter stuff
+  Timer? _timer;
 
   @override
   void onInit() {
+    // millisecondsCount = 0;
+    secondsElapsed(0);
+    currentPosition(0);
     super.onInit();
   }
 
@@ -28,6 +34,10 @@ class HomeController extends GetxController {
   decrementPosition() => (positions() - 1) == 0 ? positions : positions--;
   incrementMinutes() => minutes++;
   decrementMinutes() => (minutes() - 1) == 0 ? minutes : minutes--;
+
+  int get seconds => minutes() * 60;
+  int get total => positions() * seconds;
+  int get elapsed => secondsElapsed() + (currentPosition() * seconds);
 
   void startStop() {
     if (started())
@@ -37,59 +47,81 @@ class HomeController extends GetxController {
   }
 
   void stop() {
-    elapsed = 0;
-    position = 0;
-    started(false);
-    countdownController.pause();
     Wakelock.disable();
+
+    _stopTimer();
+    started(false);
+
+    // reset state
+    secondsElapsed(0);
+    currentPosition(0);
   }
 
   void start() {
-    elapsed = 0;
-    position = 0;
     started(true);
-    countdownController.restart();
+    _startTimer();
+
     Wakelock.enable();
   }
 
-  void play() async {
+  void playSound() async {
     _soundService.play();
   }
 
   double left() {
-    var total = positions() * seconds;
     var value = ((total - elapsed)) / total;
     return 1 - value;
   }
 
-  int get seconds => minutes() * 60;
-
   void tick() {
-    elapsed++;
-  }
+    secondsElapsed++;
 
-  void addToCount1() => count1.value++;
-  void addToCount2() => count2.value++;
+    print('tick $secondsElapsed == $seconds. total: $total, elapsed: $elapsed');
+
+    if (secondsElapsed() == seconds) {
+      playSound();
+      moveToNextPosition();
+
+      if (finished()) {
+        stop();
+        Future.delayed(Duration(seconds: 1), () => playSound());
+      } else {
+        secondsElapsed(0);
+        restartCounter();
+      }
+    }
+  }
 
   bool finished() {
-    return position == positions.value;
+    return currentPosition.value == positions.value;
   }
 
-  void move() {
-    position++;
+  void moveToNextPosition() {
+    currentPosition++;
   }
 
   void restartCounter() {
-    countdownController.restart();
+    _stopTimer();
+    _startTimer();
   }
 
   void pause() {
     if (paused()) {
-      countdownController.resume();
+      _startTimer();
       paused(false);
     } else {
-      countdownController.pause();
+      _stopTimer();
       paused(true);
+    }
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (_) => tick());
+  }
+
+  void _stopTimer() {
+    if (_timer?.isActive == true) {
+      _timer?.cancel();
     }
   }
 }

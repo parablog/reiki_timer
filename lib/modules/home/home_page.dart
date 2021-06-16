@@ -4,7 +4,6 @@ import 'package:reiki_app/modules/home/home_controller.dart';
 import 'package:reiki_app/widgets/setter.dart';
 import 'package:reiki_app/widgets/counter_info.dart';
 import 'package:reiki_app/widgets/presets.dart';
-import 'package:timer_count_down/timer_count_down.dart';
 
 class HomeBindings implements Bindings {
   @override
@@ -108,34 +107,14 @@ class HomePage extends GetView<HomeController> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Container(
-          // height: 300,
-          child: Countdown(
-            controller: controller.countdownController,
-            seconds: controller.seconds,
-            build: (_, double time) {
-              controller.tick();
-
-              return CounterInfo(
-                time: time,
-                left: controller.left(),
-                position: controller.position + 1,
-                positions: controller.positions(),
-                minutes: controller.minutes(),
-              );
-            },
-            interval: Duration(seconds: 1),
-            onFinished: () {
-              controller.play();
-              controller.move();
-              if (controller.finished()) {
-                Future.delayed(Duration(seconds: 1), () {
-                  controller.play();
-                  controller.stop();
-                });
-              } else {
-                controller.restartCounter();
-              }
-            },
+          child: Obx(
+            () => CounterInfo(
+              seconds: controller.seconds - controller.secondsElapsed(),
+              left: controller.left(),
+              position: controller.currentPosition() + 1,
+              positions: controller.positions(),
+              minutes: controller.minutes(),
+            ),
           ),
         ),
         Padding(

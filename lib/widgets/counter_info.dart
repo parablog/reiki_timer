@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:reiki_app/constants.dart';
 
 class CounterInfo extends StatelessWidget {
-  final double time;
+  final int seconds;
   final double left;
   final position;
   final positions;
@@ -10,7 +10,7 @@ class CounterInfo extends StatelessWidget {
 
   const CounterInfo({
     Key? key,
-    required this.time,
+    required this.seconds,
     required this.left,
     required this.position,
     required this.positions,
@@ -26,7 +26,7 @@ class CounterInfo extends StatelessWidget {
           style: kLabelTextStyle,
         ),
         Text(
-          '${time.toInt()}',
+          '$seconds',
           style: kCounterTextStyle,
         ),
         Container(
