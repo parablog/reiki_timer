@@ -76,8 +76,6 @@ class HomeController extends GetxController {
   void tick() {
     secondsElapsed++;
 
-    print('tick $secondsElapsed == $seconds. total: $total, elapsed: $elapsed');
-
     if (secondsElapsed() == seconds) {
       playSound();
       moveToNextPosition();
